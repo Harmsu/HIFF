@@ -13,13 +13,13 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   Object.assign(headers, options.headers || {});
 
   const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
 
   if (res.status === 401) {
-    localStorage.removeItem('token');
-    throw new Error('Ei kirjautunut');
+    if (token) localStorage.removeItem('token');
+    throw new Error(data.error || 'Ei kirjautunut');
   }
 
-  const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Pyyntö epäonnistui');
   return data as T;
 }
