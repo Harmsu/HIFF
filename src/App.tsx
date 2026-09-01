@@ -109,8 +109,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <header className="bg-violet-600 text-white py-4 px-4 shadow-md safe-top">
-        <h1 className="text-xl font-bold text-center">HIFF</h1>
+      <header className="bg-black text-white py-4 px-4 shadow-md safe-top flex items-center justify-between gap-3">
+        <h1 className="text-xl font-bold">HIFF</h1>
+        {selectedFestival && (
+          <span className="text-red-600 font-bold truncate">
+            {selectedFestival.name} ({selectedFestival.year})
+          </span>
+        )}
       </header>
 
       <main className="max-w-4xl mx-auto p-4 space-y-4">
