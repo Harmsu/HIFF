@@ -11,7 +11,7 @@ interface CalendarViewProps {
 const TYPE_COLOR: Record<string, string> = {
   elokuva: 'bg-yellow-100 border-yellow-400 text-yellow-900',
   ravintola: 'bg-green-100 border-green-400 text-green-900',
-  muu: 'bg-cyan-100 border-cyan-400 text-cyan-900',
+  muu: 'bg-orange-100 border-orange-400 text-orange-900',
 };
 
 const HOUR_HEIGHT = 56; // px per tunti
