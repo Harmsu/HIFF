@@ -94,7 +94,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4">
+    <div className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-[60] p-0 sm:p-4">
       <div className="bg-white w-full sm:max-w-lg sm:rounded-xl rounded-t-2xl max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <h2 className="text-lg font-bold text-gray-800">
