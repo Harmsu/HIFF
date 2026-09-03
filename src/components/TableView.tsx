@@ -11,7 +11,7 @@ const TYPE_ICON: Record<string, string> = { elokuva: '🎬', ravintola: '🍽️
 const TYPE_ACCENT: Record<string, string> = {
   elokuva: 'bg-yellow-50 border-l-yellow-400',
   ravintola: 'bg-green-50 border-l-green-400',
-  muu: 'bg-cyan-50 border-l-cyan-400',
+  muu: 'bg-orange-50 border-l-orange-400',
 };
 
 function LinkOrText({ value }: { value: string }) {
