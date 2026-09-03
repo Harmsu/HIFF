@@ -1,5 +1,5 @@
 import type { FestivalEventWithTheater } from '../types';
-import { findOverlappingIds, groupByDate } from '../lib/overlap';
+import { findOverlappingIds, groupByDate, layoutDayEvents } from '../lib/overlap';
 
 interface CalendarViewProps {
   events: FestivalEventWithTheater[];
@@ -9,8 +9,8 @@ interface CalendarViewProps {
 
 const TYPE_COLOR: Record<string, string> = {
   elokuva: 'bg-yellow-100 border-yellow-400 text-yellow-900',
-  ravintola: 'bg-amber-100 border-amber-400 text-amber-900',
-  muu: 'bg-teal-100 border-teal-400 text-teal-900',
+  ravintola: 'bg-green-100 border-green-400 text-green-900',
+  muu: 'bg-cyan-100 border-cyan-400 text-cyan-900',
 };
 
 const HOUR_HEIGHT = 56; // px per tunti
@@ -21,8 +21,8 @@ function toMinutes(time: string): number {
 }
 
 function dayRange(dayEvents: FestivalEventWithTheater[]): { startHour: number; endHour: number } {
-  let minStart = 9 * 60;
-  let maxEnd = 23 * 60;
+  let minStart = Infinity;
+  let maxEnd = -Infinity;
   for (const event of dayEvents) {
     const start = toMinutes(event.startTime);
     let end = toMinutes(event.endTime);
@@ -30,7 +30,9 @@ function dayRange(dayEvents: FestivalEventWithTheater[]): { startHour: number; e
     if (start < minStart) minStart = start;
     if (end > maxEnd) maxEnd = end;
   }
-  return { startHour: Math.floor(minStart / 60), endHour: Math.ceil(maxEnd / 60) };
+  // Näytä päivä alkaen tunti ennen ensimmäistä tapahtumaa, jotta scrollausta ei tarvita
+  const startHour = Math.max(Math.floor(minStart / 60) - 1, 0);
+  return { startHour, endHour: Math.ceil(maxEnd / 60) };
 }
 
 function formatDateHeader(dateStr: string): string {
@@ -51,13 +53,14 @@ export function CalendarView({ events, onEdit, onInvite }: CalendarViewProps) {
       {dates.map((date) => {
         const dayEvents = grouped.get(date)!;
         const overlapping = findOverlappingIds(dayEvents);
+        const layout = layoutDayEvents(dayEvents);
         const { startHour, endHour } = dayRange(dayEvents);
         const totalHours = endHour - startHour;
         const hours = Array.from({ length: totalHours + 1 }, (_, i) => startHour + i);
 
         return (
           <div key={date} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-4 py-2 bg-gray-50 border-b border-gray-200 font-semibold text-gray-700 capitalize">
+            <div className="px-4 py-2 bg-yellow-100 border-b border-yellow-300 font-semibold text-gray-800 capitalize">
               {formatDateHeader(date)}
               {overlapping.size > 0 && (
                 <span className="ml-2 text-red-600 text-sm font-normal">⚠️ Päällekkäisyys</span>
@@ -90,15 +93,23 @@ export function CalendarView({ events, onEdit, onInvite }: CalendarViewProps) {
                   const top = ((start - startHour * 60) / 60) * HOUR_HEIGHT;
                   const height = Math.max(((end - start) / 60) * HOUR_HEIGHT, 28);
                   const isOverlapping = overlapping.has(event.id);
+                  const { col, colCount } = layout.get(event.id)!;
+                  const widthPercent = 100 / colCount;
+                  const leftPercent = col * widthPercent;
 
                   return (
                     <button
                       key={event.id}
                       onClick={() => onEdit(event)}
-                      className={`absolute left-1 right-1 rounded-lg border-l-4 px-2 py-1 text-left text-xs overflow-hidden ${TYPE_COLOR[event.type]} ${
+                      className={`absolute rounded-lg border-l-4 px-2 py-1 text-left text-xs overflow-hidden ${TYPE_COLOR[event.type]} ${
                         isOverlapping ? 'ring-2 ring-red-500' : ''
                       }`}
-                      style={{ top, height }}
+                      style={{
+                        top,
+                        height,
+                        left: `calc(${leftPercent}% + 2px)`,
+                        width: `calc(${widthPercent}% - 4px)`,
+                      }}
                     >
                       <div className="font-semibold truncate">
                         {isOverlapping && '⚠️ '}{event.name}
