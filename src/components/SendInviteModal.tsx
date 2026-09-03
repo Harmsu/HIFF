@@ -29,7 +29,7 @@ export function SendInviteModal({ event, defaultEmail, onSend, onClose }: SendIn
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4">
       <div className="bg-white w-full max-w-sm rounded-xl p-5">
         <h2 className="text-lg font-bold text-gray-800 mb-1">Lähetä kalenterikutsu</h2>
         <p className="text-sm text-gray-500 mb-4">{event.name} — {event.date} klo {event.startTime}</p>
