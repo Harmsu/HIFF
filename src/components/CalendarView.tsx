@@ -31,9 +31,11 @@ function dayRange(dayEvents: FestivalEventWithTheater[]): { startHour: number; e
     if (start < minStart) minStart = start;
     if (end > maxEnd) maxEnd = end;
   }
-  // Näytä päivä alkaen tunti ennen ensimmäistä tapahtumaa, jotta scrollausta ei tarvita
+  // Näytä päivä alkaen tunti ennen ensimmäistä tapahtumaa, mutta jatka aina vähintään puoleenyöhön asti,
+  // jotta päivä näyttää normaalilta kalenterilta eikä katkea heti viimeisen tapahtuman jälkeen
   const startHour = Math.max(Math.floor(minStart / 60) - 1, 0);
-  return { startHour, endHour: Math.ceil(maxEnd / 60) };
+  const endHour = Math.max(Math.ceil(maxEnd / 60), 24);
+  return { startHour, endHour };
 }
 
 function formatDateHeader(dateStr: string): string {
