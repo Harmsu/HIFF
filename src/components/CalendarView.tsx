@@ -66,7 +66,7 @@ export function CalendarView({ events, onEdit, onInvite }: CalendarViewProps) {
                 <span className="ml-2 text-red-600 text-sm font-normal">⚠️ Päällekkäisyys</span>
               )}
             </div>
-            <div className="flex">
+            <div className="flex pt-3">
               <div className="w-14 flex-shrink-0 border-r border-gray-100 relative" style={{ height: totalHours * HOUR_HEIGHT }}>
                 {hours.map((h) => (
                   <div
