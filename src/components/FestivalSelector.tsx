@@ -16,7 +16,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect }: FestivalSe
       {festivals.length === 0 && <option value="">Ei festivaaleja</option>}
       {festivals.map((f) => (
         <option key={f.id} value={f.id}>
-          {f.name} ({f.year})
+          {f.name}
         </option>
       ))}
     </select>

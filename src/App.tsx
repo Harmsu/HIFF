@@ -9,10 +9,11 @@ import { Login } from './components/Login';
 import { FestivalSelector } from './components/FestivalSelector';
 import { SearchFilter } from './components/SearchFilter';
 import { TableView } from './components/TableView';
-import { CalendarView } from './components/CalendarView';
+import { CalendarView, formatDateShort } from './components/CalendarView';
 import { EventModal } from './components/EventModal';
 import { SendInviteModal } from './components/SendInviteModal';
 import { Settings } from './components/Settings';
+import { groupByDate } from './lib/overlap';
 import type { View, EventType, FestivalEventWithTheater } from './types';
 
 function App() {
@@ -27,10 +28,11 @@ function App() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<EventType | 'kaikki'>('kaikki');
   const [theaterFilter, setTheaterFilter] = useState('');
+  const [calendarDate, setCalendarDate] = useState<string>('all');
 
   const { user, loading: authLoading, signIn, signOut } = useAuth();
 
-  const { festivals, loading: festivalsLoading, addFestival, deleteFestival } = useFestivals(!!user);
+  const { festivals, loading: festivalsLoading, addFestival, updateFestival, deleteFestival } = useFestivals(!!user);
   const { theaters, addTheater } = useTheaters(!!user);
   const {
     events, loading: eventsLoading, error: eventsError,
@@ -110,7 +112,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <header className="bg-black text-white py-4 px-4 shadow-md safe-top flex items-center justify-center">
-        <h1 className="text-xl font-bold text-white">HIFF</h1>
+        <h1 className="text-xl font-bold text-white truncate">{selectedFestival ? selectedFestival.name : 'HIFF'}</h1>
       </header>
 
       <main className="max-w-4xl mx-auto p-4 space-y-4">
@@ -128,6 +130,21 @@ function App() {
 
             {selectedFestival && (
               <>
+                {activeView === 'calendar' && (
+                  <select
+                    value={calendarDate}
+                    onChange={(e) => setCalendarDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-yellow-500"
+                  >
+                    <option value="all">Kaikki päivät</option>
+                    {[...groupByDate(filteredEvents).keys()].sort().map((date) => (
+                      <option key={date} value={date}>
+                        {formatDateShort(date)}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
                 <div className="flex items-center justify-between gap-2">
                   <SearchFilter
                     search={search}
@@ -160,6 +177,7 @@ function App() {
                 ) : (
                   <CalendarView
                     events={filteredEvents}
+                    selectedDate={calendarDate}
                     onEdit={handleEditEvent}
                     onInvite={setInvitingEvent}
                   />
@@ -178,6 +196,7 @@ function App() {
             festivals={festivals}
             onImport={importEvents}
             onCreateFestival={addFestival}
+            onUpdateFestival={updateFestival}
             onDeleteFestival={handleDeleteFestival}
             onFestivalCreated={setSelectedFestivalId}
             username={user.username ?? undefined}

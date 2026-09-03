@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import type { FestivalEventWithTheater } from '../types';
 import { findOverlappingIds, groupByDate, layoutDayEvents } from '../lib/overlap';
 
 interface CalendarViewProps {
   events: FestivalEventWithTheater[];
+  selectedDate: string;
   onEdit: (event: FestivalEventWithTheater) => void;
   onInvite: (event: FestivalEventWithTheater) => void;
 }
 
 const TYPE_COLOR: Record<string, string> = {
   elokuva: 'bg-yellow-100 border-yellow-400 text-yellow-900',
-  ravintola: 'bg-green-100 border-green-400 text-green-900',
+  ravintola: 'bg-red-100 border-red-400 text-red-900',
   muu: 'bg-orange-100 border-orange-400 text-orange-900',
 };
 
@@ -43,7 +44,7 @@ function formatDateHeader(dateStr: string): string {
   return date.toLocaleDateString('fi-FI', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
-function formatDateShort(dateStr: string): string {
+export function formatDateShort(dateStr: string): string {
   const date = new Date(`${dateStr}T00:00:00`);
   return date.toLocaleDateString('fi-FI', { weekday: 'short', day: 'numeric', month: 'numeric' });
 }
@@ -125,13 +126,13 @@ function DayCard({ date, dayEvents, onEdit, onInvite }: DayCardProps) {
                   width: `calc(${widthPercent}% - 4px)`,
                 }}
               >
-                <div className="font-semibold truncate">
+                <div className="font-bold truncate">
                   {isOverlapping && '⚠️ '}{event.name}
                 </div>
                 <div className="truncate opacity-80">
                   {event.startTime}–{event.endTime}{event.theaterName ? ` · ${event.theaterName}` : ''}
                 </div>
-                {event.highlight && <div className="truncate font-bold">{event.highlight}</div>}
+                {event.highlight && <div className="truncate">{event.highlight}</div>}
                 <span
                   role="button"
                   tabIndex={0}
@@ -151,8 +152,7 @@ function DayCard({ date, dayEvents, onEdit, onInvite }: DayCardProps) {
   );
 }
 
-export function CalendarView({ events, onEdit, onInvite }: CalendarViewProps) {
-  const [selectedDate, setSelectedDate] = useState<string>('all');
+export function CalendarView({ events, selectedDate, onEdit, onInvite }: CalendarViewProps) {
   const grouped = groupByDate(events);
   const dates = [...grouped.keys()].sort();
 
@@ -163,25 +163,10 @@ export function CalendarView({ events, onEdit, onInvite }: CalendarViewProps) {
   const visibleDates = selectedDate === 'all' ? dates : dates.filter((d) => d === selectedDate);
 
   return (
-    <div className="space-y-4">
-      <select
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-yellow-500"
-      >
-        <option value="all">Kaikki päivät</option>
-        {dates.map((date) => (
-          <option key={date} value={date}>
-            {formatDateShort(date)}
-          </option>
-        ))}
-      </select>
-
-      <div className="space-y-6">
-        {visibleDates.map((date) => (
-          <DayCard key={date} date={date} dayEvents={grouped.get(date)!} onEdit={onEdit} onInvite={onInvite} />
-        ))}
-      </div>
+    <div className="space-y-6">
+      {visibleDates.map((date) => (
+        <DayCard key={date} date={date} dayEvents={grouped.get(date)!} onEdit={onEdit} onInvite={onInvite} />
+      ))}
     </div>
   );
 }
