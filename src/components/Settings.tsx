@@ -7,14 +7,45 @@ import { parseCSV, rowsToImportEvents } from '../lib/csv';
 interface SettingsProps {
   festivals: Festival[];
   onImport: (rows: ImportEventRow[]) => Promise<{ imported: number }>;
+  onCreateFestival: (festival: Omit<Festival, 'id'>) => Promise<Festival>;
   onDeleteFestival: (id: string) => Promise<void>;
+  onFestivalCreated?: (id: string) => void;
   username?: string;
   onSignOut?: () => void;
 }
 
-export function Settings({ festivals, onImport, onDeleteFestival, username, onSignOut }: SettingsProps) {
+export function Settings({ festivals, onImport, onCreateFestival, onDeleteFestival, onFestivalCreated, username, onSignOut }: SettingsProps) {
   const [status, setStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [name, setName] = useState('');
+  const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+
+  const handleCreateFestival = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateError(null);
+    setCreating(true);
+    try {
+      const created = await onCreateFestival({
+        name,
+        year: Number(year),
+        startDate: startDate || null,
+        endDate: endDate || null,
+      });
+      onFestivalCreated?.(created.id);
+      setName('');
+      setStartDate('');
+      setEndDate('');
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'Virhe tallennettaessa');
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const handleImportClick = () => fileInputRef.current?.click();
 
@@ -68,6 +99,61 @@ export function Settings({ festivals, onImport, onDeleteFestival, username, onSi
           Tuo CSV-tiedosto
         </button>
         <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">
+        <h2 className="text-lg font-semibold text-gray-800 mb-3">Lisää uusi festivaali</h2>
+        <form onSubmit={handleCreateFestival} className="space-y-3">
+          {createError && <div className="p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">{createError}</div>}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-gray-600 mb-1">Nimi</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="esim. HIFF 2026"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Vuosi</label>
+              <input
+                type="number"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+              />
+            </div>
+            <div />
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Alkupvm (valinnainen)</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Loppupvm (valinnainen)</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            disabled={creating}
+            className="w-full py-2 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
+          >
+            {creating ? 'Tallennetaan...' : 'Luo festivaali'}
+          </button>
+        </form>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">

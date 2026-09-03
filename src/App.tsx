@@ -123,7 +123,6 @@ function App() {
                 festivals={festivals}
                 selectedId={selectedFestivalId}
                 onSelect={setSelectedFestivalId}
-                onCreate={addFestival}
               />
             )}
 
@@ -178,7 +177,9 @@ function App() {
           <Settings
             festivals={festivals}
             onImport={importEvents}
+            onCreateFestival={addFestival}
             onDeleteFestival={handleDeleteFestival}
+            onFestivalCreated={setSelectedFestivalId}
             username={user.username ?? undefined}
             onSignOut={signOut}
           />
