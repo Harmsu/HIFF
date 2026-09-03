@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { pool } = require('../database');
 const { requireAuth } = require('../auth');
 const { buildICS, sendInviteEmail } = require('../ics');
+const { asyncHandler } = require('../asyncHandler');
 
 router.use(requireAuth);
 
@@ -39,7 +40,7 @@ function calcDurationMinutes(startTime, endTime) {
 }
 
 // GET /api/events?festivalId=xxx
-router.get('/', async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   const { festivalId } = req.query;
   if (!festivalId) return res.status(400).json({ error: 'festivalId vaaditaan' });
   const { rows } = await pool.query(
@@ -47,10 +48,10 @@ router.get('/', async (req, res) => {
     [festivalId]
   );
   res.json(rows.map(toEvent));
-});
+}));
 
 // GET /api/events/export?festivalId=xxx
-router.get('/export', async (req, res) => {
+router.get('/export', asyncHandler(async (req, res) => {
   const { festivalId } = req.query;
   if (!festivalId) return res.status(400).json({ error: 'festivalId vaaditaan' });
   const { rows } = await pool.query(
@@ -73,10 +74,10 @@ router.get('/export', async (req, res) => {
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', 'attachment; filename="tapahtumat.csv"');
   res.send(lines.join('\r\n'));
-});
+}));
 
 // POST /api/events
-router.post('/', async (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
   const { festivalId, type, date, name, link, theaterId, startTime, endTime, durationMinutes, highlight, note } = req.body;
   if (!festivalId || !type || !date || !name || !startTime || !endTime) {
     return res.status(400).json({ error: 'festivalId, tyyppi, pvm, nimi, alku ja loppu vaaditaan' });
@@ -89,10 +90,10 @@ router.post('/', async (req, res) => {
   );
   const { rows: fullRows } = await pool.query(`${SELECT_EVENTS} WHERE e.id = $1`, [rows[0].id]);
   res.status(201).json(toEvent(fullRows[0]));
-});
+}));
 
 // PUT /api/events/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', asyncHandler(async (req, res) => {
   const { rows: existingRows } = await pool.query('SELECT * FROM events WHERE id = $1', [req.params.id]);
   if (!existingRows[0]) return res.status(404).json({ error: 'Tapahtumaa ei löydy' });
 
@@ -105,18 +106,18 @@ router.put('/:id', async (req, res) => {
   );
   const { rows: fullRows } = await pool.query(`${SELECT_EVENTS} WHERE e.id = $1`, [req.params.id]);
   res.json(toEvent(fullRows[0]));
-});
+}));
 
 // DELETE /api/events/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', asyncHandler(async (req, res) => {
   const { rows: existingRows } = await pool.query('SELECT * FROM events WHERE id = $1', [req.params.id]);
   if (!existingRows[0]) return res.status(404).json({ error: 'Tapahtumaa ei löydy' });
   await pool.query('DELETE FROM events WHERE id = $1', [req.params.id]);
   res.json({ success: true });
-});
+}));
 
 // POST /api/events/:id/invite
-router.post('/:id/invite', async (req, res) => {
+router.post('/:id/invite', asyncHandler(async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Sähköpostiosoite vaaditaan' });
 
@@ -136,10 +137,10 @@ router.post('/:id/invite', async (req, res) => {
 
   await sendInviteEmail({ to: email, icsContent, event, locationText });
   res.json({ success: true });
-});
+}));
 
 // POST /api/events/import - lisää tapahtumia (ja tarvittaessa festivaaleja/paikkoja), ei korvaa olemassa olevaa dataa
-router.post('/import', async (req, res) => {
+router.post('/import', asyncHandler(async (req, res) => {
   const { events } = req.body;
   if (!Array.isArray(events)) {
     return res.status(400).json({ error: 'events-taulukko vaaditaan' });
@@ -214,6 +215,6 @@ router.post('/import', async (req, res) => {
   }
 
   res.json({ imported });
-});
+}));
 
 module.exports = router;

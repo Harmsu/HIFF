@@ -2,8 +2,9 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const { generateToken, requireAuth, validateUser } = require('../auth');
 const { pool } = require('../database');
+const { asyncHandler } = require('../asyncHandler');
 
-router.post('/login', async (req, res) => {
+router.post('/login', asyncHandler(async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: 'Käyttäjätunnus ja salasana vaaditaan' });
@@ -13,18 +14,18 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Väärä tunnus tai salasana' });
   }
   res.json({ token: generateToken() });
-});
+}));
 
-router.get('/me', requireAuth, async (_req, res) => {
+router.get('/me', requireAuth, asyncHandler(async (_req, res) => {
   const { rows: usernameRows } = await pool.query("SELECT value FROM config WHERE key='username'");
   const { rows: emailRows } = await pool.query("SELECT value FROM config WHERE key='email'");
   res.json({
     username: usernameRows[0]?.value || 'admin',
     email: emailRows[0]?.value || '',
   });
-});
+}));
 
-router.post('/change-password', requireAuth, async (req, res) => {
+router.post('/change-password', requireAuth, asyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   if (!currentPassword || !newPassword) {
     return res.status(400).json({ error: 'Molemmat salasanat vaaditaan' });
@@ -35,6 +36,6 @@ router.post('/change-password', requireAuth, async (req, res) => {
   const hash = await bcrypt.hash(newPassword, 12);
   await pool.query("UPDATE config SET value=$1 WHERE key='password_hash'", [hash]);
   res.json({ success: true });
-});
+}));
 
 module.exports = router;

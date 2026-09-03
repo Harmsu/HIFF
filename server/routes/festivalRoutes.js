@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { pool } = require('../database');
 const { requireAuth } = require('../auth');
+const { asyncHandler } = require('../asyncHandler');
 
 router.use(requireAuth);
 
@@ -15,13 +16,13 @@ function toFestival(row) {
 }
 
 // GET /api/festivals
-router.get('/', async (_req, res) => {
+router.get('/', asyncHandler(async (_req, res) => {
   const { rows } = await pool.query('SELECT * FROM festivals ORDER BY year DESC, name ASC');
   res.json(rows.map(toFestival));
-});
+}));
 
 // POST /api/festivals
-router.post('/', async (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
   const { name, year, startDate, endDate } = req.body;
   if (!name || !year) {
     return res.status(400).json({ error: 'Nimi ja vuosi vaaditaan' });
@@ -31,10 +32,10 @@ router.post('/', async (req, res) => {
     [name, Number(year), startDate || null, endDate || null]
   );
   res.status(201).json(toFestival(rows[0]));
-});
+}));
 
 // PUT /api/festivals/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', asyncHandler(async (req, res) => {
   const { rows: existingRows } = await pool.query('SELECT * FROM festivals WHERE id = $1', [req.params.id]);
   if (!existingRows[0]) return res.status(404).json({ error: 'Festivaalia ei löydy' });
 
@@ -44,14 +45,14 @@ router.put('/:id', async (req, res) => {
     [name, Number(year), startDate || null, endDate || null, req.params.id]
   );
   res.json(toFestival(rows[0]));
-});
+}));
 
 // DELETE /api/festivals/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', asyncHandler(async (req, res) => {
   const { rows: existingRows } = await pool.query('SELECT * FROM festivals WHERE id = $1', [req.params.id]);
   if (!existingRows[0]) return res.status(404).json({ error: 'Festivaalia ei löydy' });
   await pool.query('DELETE FROM festivals WHERE id = $1', [req.params.id]);
   res.json({ success: true });
-});
+}));
 
 module.exports = router;

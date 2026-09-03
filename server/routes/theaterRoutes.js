@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { pool } = require('../database');
 const { requireAuth } = require('../auth');
+const { asyncHandler } = require('../asyncHandler');
 
 router.use(requireAuth);
 
@@ -13,13 +14,13 @@ function toTheater(row) {
 }
 
 // GET /api/theaters
-router.get('/', async (_req, res) => {
+router.get('/', asyncHandler(async (_req, res) => {
   const { rows } = await pool.query('SELECT * FROM theaters ORDER BY name ASC');
   res.json(rows.map(toTheater));
-});
+}));
 
 // POST /api/theaters
-router.post('/', async (req, res) => {
+router.post('/', asyncHandler(async (req, res) => {
   const { name, location } = req.body;
   if (!name) {
     return res.status(400).json({ error: 'Nimi vaaditaan' });
@@ -29,10 +30,10 @@ router.post('/', async (req, res) => {
     [name, location || '']
   );
   res.status(201).json(toTheater(rows[0]));
-});
+}));
 
 // PUT /api/theaters/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', asyncHandler(async (req, res) => {
   const { rows: existingRows } = await pool.query('SELECT * FROM theaters WHERE id = $1', [req.params.id]);
   if (!existingRows[0]) return res.status(404).json({ error: 'Paikkaa ei löydy' });
 
@@ -42,14 +43,14 @@ router.put('/:id', async (req, res) => {
     [name, location || '', req.params.id]
   );
   res.json(toTheater(rows[0]));
-});
+}));
 
 // DELETE /api/theaters/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', asyncHandler(async (req, res) => {
   const { rows: existingRows } = await pool.query('SELECT * FROM theaters WHERE id = $1', [req.params.id]);
   if (!existingRows[0]) return res.status(404).json({ error: 'Paikkaa ei löydy' });
   await pool.query('DELETE FROM theaters WHERE id = $1', [req.params.id]);
   res.json({ success: true });
-});
+}));
 
 module.exports = router;
