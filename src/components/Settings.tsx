@@ -63,7 +63,7 @@ export function Settings({ festivals, onImport, onDeleteFestival, username, onSi
         </p>
         <button
           onClick={handleImportClick}
-          className="w-full py-2 px-4 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors"
+          className="w-full py-2 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
         >
           Tuo CSV-tiedosto
         </button>

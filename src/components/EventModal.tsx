@@ -113,7 +113,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                   onClick={() => setType(t)}
                   className={`flex-1 py-2 rounded-lg text-sm font-medium border ${
                     type === t
-                      ? 'bg-violet-600 text-white border-violet-600'
+                      ? 'bg-black text-white border-black'
                       : 'bg-white text-gray-600 border-gray-300'
                   }`}
                 >
@@ -253,7 +253,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2.5 px-4 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 disabled:opacity-50"
+              className="flex-1 py-2.5 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
             >
               {saving ? 'Tallennetaan...' : 'Tallenna'}
             </button>

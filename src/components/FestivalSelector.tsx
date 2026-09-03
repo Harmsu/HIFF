@@ -90,7 +90,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect, onCreate }: 
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 py-2 px-4 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 disabled:opacity-50"
+            className="flex-1 py-2 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
           >
             {saving ? 'Tallennetaan...' : 'Luo festivaali'}
           </button>
@@ -122,7 +122,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect, onCreate }: 
       </select>
       <button
         onClick={() => setCreating(true)}
-        className="px-4 py-2 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 whitespace-nowrap"
+        className="px-4 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800 whitespace-nowrap"
       >
         + Uusi
       </button>

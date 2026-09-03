@@ -41,7 +41,7 @@ export function SendInviteModal({ event, defaultEmail, onSend, onClose }: SendIn
             </div>
             <button
               onClick={onClose}
-              className="w-full py-2.5 px-4 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700"
+              className="w-full py-2.5 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800"
             >
               Sulje
             </button>
@@ -64,7 +64,7 @@ export function SendInviteModal({ event, defaultEmail, onSend, onClose }: SendIn
               <button
                 type="submit"
                 disabled={sending}
-                className="flex-1 py-2.5 px-4 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 disabled:opacity-50"
+                className="flex-1 py-2.5 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
               >
                 {sending ? 'Lähetetään...' : 'Lähetä'}
               </button>

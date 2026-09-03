@@ -27,7 +27,7 @@ export function Login({ onSignIn }: LoginProps) {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-violet-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+          <div className="w-16 h-16 bg-black rounded-2xl mx-auto mb-4 flex items-center justify-center">
             <span className="text-3xl">🎬</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-800">HIFF</h1>
@@ -78,7 +78,7 @@ export function Login({ onSignIn }: LoginProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 py-3 px-4 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mt-6 py-3 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Odota...' : 'Kirjaudu'}
           </button>
