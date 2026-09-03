@@ -8,7 +8,7 @@ interface CalendarViewProps {
 }
 
 const TYPE_COLOR: Record<string, string> = {
-  elokuva: 'bg-violet-100 border-violet-400 text-violet-900',
+  elokuva: 'bg-yellow-100 border-yellow-400 text-yellow-900',
   ravintola: 'bg-amber-100 border-amber-400 text-amber-900',
   muu: 'bg-teal-100 border-teal-400 text-teal-900',
 };

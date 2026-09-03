@@ -19,12 +19,12 @@ export function SearchFilter({
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder="Hae nimellä..."
-        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500"
+        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-yellow-500"
       />
       <select
         value={typeFilter}
         onChange={(e) => onTypeFilterChange(e.target.value as EventType | 'kaikki')}
-        className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500"
+        className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-yellow-500"
       >
         <option value="kaikki">Kaikki tyypit</option>
         <option value="elokuva">🎬 Elokuva</option>
@@ -34,7 +34,7 @@ export function SearchFilter({
       <select
         value={theaterFilter}
         onChange={(e) => onTheaterFilterChange(e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500"
+        className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-yellow-500"
       >
         <option value="">Kaikki paikat</option>
         {theaters.map((t) => (

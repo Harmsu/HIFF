@@ -131,7 +131,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 onChange={(e) => setName(e.target.value)}
                 required
                 autoFocus
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
             <div className="col-span-2">
@@ -140,7 +140,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 value={link}
                 onChange={(e) => setLink(e.target.value)}
                 placeholder="https:// tai esim. White Snail"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
 
@@ -149,7 +149,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
               <select
                 value={theaterId}
                 onChange={(e) => setTheaterId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-yellow-500"
               >
                 <option value="">Ei paikkaa</option>
                 {theaters.map((t) => (
@@ -168,7 +168,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                     value={newTheaterName}
                     onChange={(e) => setNewTheaterName(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
                   />
                 </div>
                 <div>
@@ -176,7 +176,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                   <input
                     value={newTheaterLocation}
                     onChange={(e) => setNewTheaterLocation(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
                   />
                 </div>
               </>
@@ -189,7 +189,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
             <div />
@@ -200,7 +200,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
             <div>
@@ -210,7 +210,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
 
@@ -224,7 +224,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                   setDurationManuallySet(true);
                 }}
                 placeholder="Lasketaan automaattisesti alku/loppu-ajoista"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
 
@@ -234,7 +234,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 value={highlight}
                 onChange={(e) => setHighlight(e.target.value)}
                 placeholder="esim. Orion!!!"
-                className="w-full px-3 py-2 border border-amber-300 bg-amber-50 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-amber-300 bg-amber-50 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
 
@@ -244,7 +244,7 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
           </div>
