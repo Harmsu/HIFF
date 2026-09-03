@@ -8,6 +8,11 @@ interface TableViewProps {
 }
 
 const TYPE_ICON: Record<string, string> = { elokuva: '🎬', ravintola: '🍽️', muu: '📌' };
+const TYPE_ACCENT: Record<string, string> = {
+  elokuva: 'bg-yellow-50 border-l-yellow-400',
+  ravintola: 'bg-green-50 border-l-green-400',
+  muu: 'bg-cyan-50 border-l-cyan-400',
+};
 
 function LinkOrText({ value }: { value: string }) {
   if (!value) return null;
@@ -34,7 +39,7 @@ export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps
   return (
     <div className="space-y-2">
       {events.map((event) => (
-        <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-3">
+        <div key={event.id} className={`rounded-xl shadow-sm border border-gray-100 border-l-4 p-3 ${TYPE_ACCENT[event.type]}`}>
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <div className="font-medium text-gray-800 break-words">
