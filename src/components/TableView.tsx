@@ -10,7 +10,7 @@ interface TableViewProps {
 const TYPE_ICON: Record<string, string> = { elokuva: '🎬', ravintola: '🍽️', muu: '📌' };
 const TYPE_ACCENT: Record<string, string> = {
   elokuva: 'bg-yellow-50 border-l-yellow-400',
-  ravintola: 'bg-green-50 border-l-green-400',
+  ravintola: 'bg-red-50 border-l-red-400',
   muu: 'bg-orange-50 border-l-orange-400',
 };
 
@@ -70,7 +70,7 @@ export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps
           )}
 
           {event.highlight && (
-            <div className="text-sm font-semibold text-gray-800 bg-amber-50 rounded-md px-2 py-1 mt-1.5">
+            <div className="text-sm text-gray-800 mt-1.5">
               {event.highlight}
             </div>
           )}

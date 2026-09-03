@@ -8,13 +8,14 @@ interface SettingsProps {
   festivals: Festival[];
   onImport: (rows: ImportEventRow[]) => Promise<{ imported: number }>;
   onCreateFestival: (festival: Omit<Festival, 'id'>) => Promise<Festival>;
+  onUpdateFestival: (id: string, festival: Omit<Festival, 'id'>) => Promise<void>;
   onDeleteFestival: (id: string) => Promise<void>;
   onFestivalCreated?: (id: string) => void;
   username?: string;
   onSignOut?: () => void;
 }
 
-export function Settings({ festivals, onImport, onCreateFestival, onDeleteFestival, onFestivalCreated, username, onSignOut }: SettingsProps) {
+export function Settings({ festivals, onImport, onCreateFestival, onUpdateFestival, onDeleteFestival, onFestivalCreated, username, onSignOut }: SettingsProps) {
   const [status, setStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -79,6 +80,41 @@ export function Settings({ festivals, onImport, onCreateFestival, onDeleteFestiv
       return;
     }
     await onDeleteFestival(festival.id);
+  };
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: '', year: '', startDate: '', endDate: '' });
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  const startEdit = (festival: Festival) => {
+    setEditingId(festival.id);
+    setEditForm({
+      name: festival.name,
+      year: String(festival.year),
+      startDate: festival.startDate ?? '',
+      endDate: festival.endDate ?? '',
+    });
+    setEditError(null);
+  };
+
+  const handleUpdateFestival = async (e: React.FormEvent, id: string) => {
+    e.preventDefault();
+    setEditError(null);
+    setEditSaving(true);
+    try {
+      await onUpdateFestival(id, {
+        name: editForm.name,
+        year: Number(editForm.year),
+        startDate: editForm.startDate || null,
+        endDate: editForm.endDate || null,
+      });
+      setEditingId(null);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : 'Virhe tallennettaessa');
+    } finally {
+      setEditSaving(false);
+    }
   };
 
   return (
@@ -161,39 +197,109 @@ export function Settings({ festivals, onImport, onCreateFestival, onDeleteFestiv
         {festivals.length === 0 && <p className="text-sm text-gray-500">Ei vielä festivaaleja.</p>}
         <ul className="divide-y divide-gray-100">
           {festivals.map((f) => (
-            <li key={f.id} className="py-2 flex items-center justify-between gap-2">
-              <span className="text-sm text-gray-700">{f.name} ({f.year})</span>
-              <div className="flex gap-2">
-                <a
-                  href={api.exportEventsUrl(f.id)}
-                  className="text-sm px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  onClick={(e) => {
-                    // liitä token latauslinkkiin, koska <a>-lataus ei kulje fetch-clientin kautta
-                    e.preventDefault();
-                    const token = localStorage.getItem('token');
-                    fetch(api.exportEventsUrl(f.id), { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-                      .then((res) => res.blob())
-                      .then((blob) => {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${f.name}-${f.year}.csv`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                      });
-                  }}
-                >
-                  Vie CSV
-                </a>
-                <button
-                  onClick={() => handleDelete(f)}
-                  className="text-sm px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
-                >
-                  Poista
-                </button>
-              </div>
+            <li key={f.id} className="py-2">
+              {editingId === f.id ? (
+                <form onSubmit={(e) => handleUpdateFestival(e, f.id)} className="space-y-3 py-1">
+                  {editError && <div className="p-2 bg-red-50 border border-red-200 rounded text-red-700 text-sm">{editError}</div>}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="col-span-2">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Nimi</label>
+                      <input
+                        value={editForm.name}
+                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Vuosi</label>
+                      <input
+                        type="number"
+                        value={editForm.year}
+                        onChange={(e) => setEditForm({ ...editForm, year: e.target.value })}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                    <div />
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Alkupvm (valinnainen)</label>
+                      <input
+                        type="date"
+                        value={editForm.startDate}
+                        onChange={(e) => setEditForm({ ...editForm, startDate: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Loppupvm (valinnainen)</label>
+                      <input
+                        type="date"
+                        value={editForm.endDate}
+                        onChange={(e) => setEditForm({ ...editForm, endDate: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={editSaving}
+                      className="flex-1 py-2 px-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
+                    >
+                      {editSaving ? 'Tallennetaan...' : 'Tallenna'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(null)}
+                      className="py-2 px-4 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
+                    >
+                      Peruuta
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm text-gray-700">{f.name} ({f.year})</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => startEdit(f)}
+                      className="text-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                    >
+                      Muokkaa
+                    </button>
+                    <a
+                      href={api.exportEventsUrl(f.id)}
+                      className="text-sm px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      onClick={(e) => {
+                        // liitä token latauslinkkiin, koska <a>-lataus ei kulje fetch-clientin kautta
+                        e.preventDefault();
+                        const token = localStorage.getItem('token');
+                        fetch(api.exportEventsUrl(f.id), { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+                          .then((res) => res.blob())
+                          .then((blob) => {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `${f.name}-${f.year}.csv`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                          });
+                      }}
+                    >
+                      Vie CSV
+                    </a>
+                    <button
+                      onClick={() => handleDelete(f)}
+                      className="text-sm px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
+                    >
+                      Poista
+                    </button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
