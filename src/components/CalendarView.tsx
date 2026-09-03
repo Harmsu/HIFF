@@ -14,6 +14,7 @@ const TYPE_COLOR: Record<string, string> = {
 };
 
 const HOUR_HEIGHT = 56; // px per tunti
+const DAY_VIEW_HEIGHT = 400; // px - kaikki päivälaatikot samankokoisia, sisällä oma vierityspalkki
 
 function toMinutes(time: string): number {
   const [h, m] = time.split(':').map(Number);
@@ -66,7 +67,7 @@ export function CalendarView({ events, onEdit, onInvite }: CalendarViewProps) {
                 <span className="ml-2 text-red-600 text-sm font-normal">⚠️ Päällekkäisyys</span>
               )}
             </div>
-            <div className="flex pt-3">
+            <div className="flex pt-3 overflow-y-auto" style={{ height: DAY_VIEW_HEIGHT }}>
               <div className="w-14 flex-shrink-0 border-r border-gray-100 relative" style={{ height: totalHours * HOUR_HEIGHT }}>
                 {hours.map((h) => (
                   <div
