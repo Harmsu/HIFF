@@ -18,7 +18,7 @@ function LinkOrText({ value }: { value: string }) {
   if (!value) return null;
   if (value.startsWith('http')) {
     return (
-      <a href={value} target="_blank" rel="noopener noreferrer" className="text-yellow-600 hover:underline break-all">
+      <a href={value} target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:underline break-all">
         {value}
       </a>
     );
@@ -45,7 +45,7 @@ export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps
               <div className="font-medium text-gray-800 break-words">
                 <span className="mr-1">{TYPE_ICON[event.type]}</span>{event.name}
               </div>
-              <div className="text-xs text-gray-500 mt-0.5">
+              <div className="text-xs text-gray-800 mt-0.5">
                 {formatDate(event.date)} · {event.startTime}–{event.endTime}
                 {event.durationMinutes != null && ` (${event.durationMinutes} min)`}
               </div>
@@ -58,11 +58,11 @@ export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps
           </div>
 
           {(event.theaterName || event.link) && (
-            <div className="text-sm text-gray-600 mt-1.5 space-y-0.5">
+            <div className="text-sm text-gray-800 mt-1.5 space-y-0.5">
               {event.theaterName && (
                 <div>
                   📍 {event.theaterName}
-                  {event.theaterLocation && <span className="text-gray-400"> — {event.theaterLocation}</span>}
+                  {event.theaterLocation && <span className="text-gray-800"> — {event.theaterLocation}</span>}
                 </div>
               )}
               {event.link && <div><LinkOrText value={event.link} /></div>}
@@ -70,13 +70,13 @@ export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps
           )}
 
           {event.highlight && (
-            <div className="text-sm font-semibold text-amber-700 bg-amber-50 rounded-md px-2 py-1 mt-1.5">
+            <div className="text-sm font-semibold text-gray-800 bg-amber-50 rounded-md px-2 py-1 mt-1.5">
               {event.highlight}
             </div>
           )}
 
           {event.note && (
-            <div className="text-sm text-gray-500 mt-1.5 break-words">{event.note}</div>
+            <div className="text-sm text-gray-800 mt-1.5 break-words">{event.note}</div>
           )}
         </div>
       ))}
