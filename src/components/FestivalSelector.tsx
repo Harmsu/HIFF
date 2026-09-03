@@ -53,7 +53,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect, onCreate }: 
               required
               autoFocus
               placeholder="esim. HIFF 2026"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
             />
           </div>
           <div>
@@ -63,7 +63,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect, onCreate }: 
               value={year}
               onChange={(e) => setYear(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
             />
           </div>
           <div />
@@ -73,7 +73,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect, onCreate }: 
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
             />
           </div>
           <div>
@@ -82,7 +82,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect, onCreate }: 
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
             />
           </div>
         </div>
@@ -111,7 +111,7 @@ export function FestivalSelector({ festivals, selectedId, onSelect, onCreate }: 
       <select
         value={selectedId ?? ''}
         onChange={(e) => onSelect(e.target.value)}
-        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-violet-500"
+        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-yellow-500"
       >
         {festivals.length === 0 && <option value="">Ei festivaaleja</option>}
         {festivals.map((f) => (

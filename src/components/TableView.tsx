@@ -13,7 +13,7 @@ function LinkOrText({ value }: { value: string }) {
   if (!value) return null;
   if (value.startsWith('http')) {
     return (
-      <a href={value} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:underline break-all">
+      <a href={value} target="_blank" rel="noopener noreferrer" className="text-yellow-600 hover:underline break-all">
         {value}
       </a>
     );
@@ -46,7 +46,7 @@ export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps
               </div>
             </div>
             <div className="flex gap-1 shrink-0">
-              <button onClick={() => onInvite(event)} title="Lähetä kalenterikutsu" className="p-1.5 rounded hover:bg-violet-50 text-violet-600">📧</button>
+              <button onClick={() => onInvite(event)} title="Lähetä kalenterikutsu" className="p-1.5 rounded hover:bg-yellow-50 text-yellow-600">📧</button>
               <button onClick={() => onEdit(event)} title="Muokkaa" className="p-1.5 rounded hover:bg-gray-100">✏️</button>
               <button onClick={() => onDelete(event.id)} title="Poista" className="p-1.5 rounded hover:bg-red-50 text-red-600">🗑️</button>
             </div>
