@@ -1,7 +1,9 @@
-import type { FestivalEventWithTheater } from '../types';
+import type { FestivalEventWithTheater, TicketMeta } from '../types';
+import { TicketQuickOpen } from './TicketQuickOpen';
 
 interface TableViewProps {
   events: FestivalEventWithTheater[];
+  ticketsByEvent: Record<string, TicketMeta[]>;
   onEdit: (event: FestivalEventWithTheater) => void;
   onDelete: (id: string) => void;
   onInvite: (event: FestivalEventWithTheater) => void;
@@ -31,7 +33,7 @@ function formatDate(date: string) {
   return `${d}.${m}.${y}`;
 }
 
-export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps) {
+export function TableView({ events, ticketsByEvent, onEdit, onDelete, onInvite }: TableViewProps) {
   if (events.length === 0) {
     return <p className="text-center text-gray-500 py-8">Ei tapahtumia. Lisää ensimmäinen alta.</p>;
   }
@@ -51,6 +53,9 @@ export function TableView({ events, onEdit, onDelete, onInvite }: TableViewProps
               </div>
             </div>
             <div className="flex gap-1 shrink-0">
+              {event.type === 'elokuva' && (
+                <TicketQuickOpen eventId={event.id} tickets={ticketsByEvent[event.id] ?? []} />
+              )}
               <button onClick={() => onInvite(event)} title="Lähetä kalenterikutsu" className="p-1.5 rounded hover:bg-yellow-50 text-yellow-600">📧</button>
               <button onClick={() => onEdit(event)} title="Muokkaa" className="p-1.5 rounded hover:bg-gray-100">✏️</button>
               <button onClick={() => onDelete(event.id)} title="Poista" className="p-1.5 rounded hover:bg-red-50 text-red-600">🗑️</button>

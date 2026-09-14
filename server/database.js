@@ -49,6 +49,19 @@ async function initDB() {
 
     CREATE INDEX IF NOT EXISTS idx_events_festival ON events(festival_id);
     CREATE INDEX IF NOT EXISTS idx_events_date ON events(date);
+
+    CREATE TABLE IF NOT EXISTS event_tickets (
+      id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      event_id           UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+      slot               INTEGER NOT NULL CHECK (slot IN (1, 2)),
+      mime_type          TEXT NOT NULL,
+      original_filename  TEXT,
+      data               BYTEA NOT NULL,
+      uploaded_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+      UNIQUE (event_id, slot)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_event_tickets_event ON event_tickets(event_id);
   `);
 
   await seedAdmin();

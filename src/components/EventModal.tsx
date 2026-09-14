@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { EventType, FestivalEventWithTheater, Theater } from '../types';
+import { TicketSection } from './TicketUpload';
 
 interface EventModalProps {
   festivalId: string;
@@ -247,6 +248,17 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>
+
+            {type === 'elokuva' && editingEvent && (
+              <div className="col-span-2">
+                <TicketSection eventId={editingEvent.id} />
+              </div>
+            )}
+            {type === 'elokuva' && !editingEvent && (
+              <div className="col-span-2 text-xs text-gray-500">
+                Tallenna tapahtuma ensin, niin voit lisätä liput.
+              </div>
+            )}
           </div>
 
           <div className="flex gap-2 pt-2">

@@ -4,6 +4,7 @@ import { useAuth } from './hooks/useAuth';
 import { useFestivals } from './hooks/useFestivals';
 import { useTheaters } from './hooks/useTheaters';
 import { useEvents } from './hooks/useEvents';
+import { useEventTickets } from './hooks/useTickets';
 import { Navigation } from './components/Navigation';
 import { Login } from './components/Login';
 import { FestivalSelector } from './components/FestivalSelector';
@@ -24,6 +25,7 @@ function App() {
   const [editingEvent, setEditingEvent] = useState<FestivalEventWithTheater | null>(null);
   const [showEventModal, setShowEventModal] = useState(false);
   const [invitingEvent, setInvitingEvent] = useState<FestivalEventWithTheater | null>(null);
+  const [ticketsRefreshKey, setTicketsRefreshKey] = useState(0);
 
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<EventType | 'kaikki'>('kaikki');
@@ -60,6 +62,8 @@ function App() {
       return true;
     });
   }, [events, typeFilter, theaterFilter, search]);
+
+  const ticketsByEvent = useEventTickets(filteredEvents, ticketsRefreshKey);
 
   const handleSaveEvent = async (data: Parameters<typeof addEvent>[0]) => {
     if (editingEvent) {
@@ -170,6 +174,7 @@ function App() {
                 ) : activeView === 'table' ? (
                   <TableView
                     events={filteredEvents}
+                    ticketsByEvent={ticketsByEvent}
                     onEdit={handleEditEvent}
                     onDelete={handleDeleteEvent}
                     onInvite={setInvitingEvent}
@@ -177,6 +182,7 @@ function App() {
                 ) : (
                   <CalendarView
                     events={filteredEvents}
+                    ticketsByEvent={ticketsByEvent}
                     selectedDate={calendarDate}
                     onEdit={handleEditEvent}
                     onInvite={setInvitingEvent}
@@ -212,7 +218,7 @@ function App() {
           editingEvent={editingEvent}
           onSave={handleSaveEvent}
           onCreateTheater={addTheater}
-          onClose={() => { setShowEventModal(false); setEditingEvent(null); }}
+          onClose={() => { setShowEventModal(false); setEditingEvent(null); setTicketsRefreshKey((k) => k + 1); }}
         />
       )}
 

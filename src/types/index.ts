@@ -35,3 +35,11 @@ export interface FestivalEventWithTheater extends FestivalEvent {
 }
 
 export type View = 'table' | 'calendar' | 'settings';
+
+export interface TicketMeta {
+  slot: 1 | 2;
+  mimeType: string;
+  originalFilename: string | null;
+  uploadedAt: string;
+  url: string;
+}

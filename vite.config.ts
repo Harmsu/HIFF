@@ -40,7 +40,18 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: /\/api\/events\/[^/]+\/tickets\/[12]\/file$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'ticket-images',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 200 },
+            },
+          },
+        ]
       }
     })
   ],

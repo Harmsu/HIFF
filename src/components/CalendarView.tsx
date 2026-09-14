@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
-import type { FestivalEventWithTheater } from '../types';
+import type { FestivalEventWithTheater, TicketMeta } from '../types';
 import { findOverlappingIds, groupByDate, layoutDayEvents } from '../lib/overlap';
+import { TicketQuickOpen } from './TicketQuickOpen';
 
 interface CalendarViewProps {
   events: FestivalEventWithTheater[];
+  ticketsByEvent: Record<string, TicketMeta[]>;
   selectedDate: string;
   onEdit: (event: FestivalEventWithTheater) => void;
   onInvite: (event: FestivalEventWithTheater) => void;
@@ -52,11 +54,12 @@ export function formatDateShort(dateStr: string): string {
 interface DayCardProps {
   date: string;
   dayEvents: FestivalEventWithTheater[];
+  ticketsByEvent: Record<string, TicketMeta[]>;
   onEdit: (event: FestivalEventWithTheater) => void;
   onInvite: (event: FestivalEventWithTheater) => void;
 }
 
-function DayCard({ date, dayEvents, onEdit, onInvite }: DayCardProps) {
+function DayCard({ date, dayEvents, ticketsByEvent, onEdit, onInvite }: DayCardProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const overlapping = findOverlappingIds(dayEvents);
   const layout = layoutDayEvents(dayEvents);
@@ -132,17 +135,41 @@ function DayCard({ date, dayEvents, onEdit, onInvite }: DayCardProps) {
                 <div className="truncate opacity-80">
                   {event.startTime}–{event.endTime}{event.theaterName ? ` · ${event.theaterName}` : ''}
                 </div>
+                {event.link && (
+                  event.link.startsWith('http') ? (
+                    <div
+                      role="link"
+                      tabIndex={0}
+                      onClick={(e) => { e.stopPropagation(); window.open(event.link, '_blank', 'noopener,noreferrer'); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); window.open(event.link, '_blank', 'noopener,noreferrer'); } }}
+                      className="truncate underline"
+                    >
+                      {event.link}
+                    </div>
+                  ) : (
+                    <div className="truncate">{event.link}</div>
+                  )
+                )}
                 {event.highlight && <div className="truncate">{event.highlight}</div>}
-                <span
-                  role="button"
-                  tabIndex={0}
-                  onClick={(e) => { e.stopPropagation(); onInvite(event); }}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onInvite(event); } }}
-                  className="absolute top-1 right-1 opacity-70 hover:opacity-100"
-                  title="Lähetä kalenterikutsu"
-                >
-                  📧
-                </span>
+                <div className="absolute top-1 right-1 flex items-center gap-1.5">
+                  {event.type === 'elokuva' && (
+                    <TicketQuickOpen
+                      eventId={event.id}
+                      tickets={ticketsByEvent[event.id] ?? []}
+                      className="opacity-70 hover:opacity-100 cursor-pointer"
+                    />
+                  )}
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => { e.stopPropagation(); onInvite(event); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onInvite(event); } }}
+                    className="opacity-70 hover:opacity-100"
+                    title="Lähetä kalenterikutsu"
+                  >
+                    📧
+                  </span>
+                </div>
               </button>
             );
           })}
@@ -152,7 +179,7 @@ function DayCard({ date, dayEvents, onEdit, onInvite }: DayCardProps) {
   );
 }
 
-export function CalendarView({ events, selectedDate, onEdit, onInvite }: CalendarViewProps) {
+export function CalendarView({ events, ticketsByEvent, selectedDate, onEdit, onInvite }: CalendarViewProps) {
   const grouped = groupByDate(events);
   const dates = [...grouped.keys()].sort();
 
@@ -165,7 +192,14 @@ export function CalendarView({ events, selectedDate, onEdit, onInvite }: Calenda
   return (
     <div className="space-y-6">
       {visibleDates.map((date) => (
-        <DayCard key={date} date={date} dayEvents={grouped.get(date)!} onEdit={onEdit} onInvite={onInvite} />
+        <DayCard
+          key={date}
+          date={date}
+          dayEvents={grouped.get(date)!}
+          ticketsByEvent={ticketsByEvent}
+          onEdit={onEdit}
+          onInvite={onInvite}
+        />
       ))}
     </div>
   );

@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const festivalRoutes = require('./routes/festivalRoutes');
 const theaterRoutes = require('./routes/theaterRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/festivals', festivalRoutes);
 app.use('/api/theaters', theaterRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/events/:eventId/tickets', ticketRoutes);
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 

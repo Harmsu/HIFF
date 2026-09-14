@@ -1,4 +1,4 @@
-import type { Festival, Theater, FestivalEventWithTheater, EventType } from '../types';
+import type { Festival, Theater, FestivalEventWithTheater, EventType, TicketMeta } from '../types';
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
@@ -20,6 +20,22 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     throw new Error(data.error || 'Ei kirjautunut');
   }
 
+  if (!res.ok) throw new Error(data.error || 'Pyyntö epäonnistui');
+  return data as T;
+}
+
+async function requestForm<T>(path: string, formData: FormData): Promise<T> {
+  const token = getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}${path}`, { method: 'POST', headers, body: formData });
+  const data = await res.json().catch(() => ({}));
+
+  if (res.status === 401) {
+    if (token) localStorage.removeItem('token');
+    throw new Error(data.error || 'Ei kirjautunut');
+  }
   if (!res.ok) throw new Error(data.error || 'Pyyntö epäonnistui');
   return data as T;
 }
@@ -98,6 +114,17 @@ export const api = {
     request<{ imported: number }>('/events/import', { method: 'POST', body: JSON.stringify({ events }) }),
   exportEventsUrl: (festivalId: string) =>
     `${BASE_URL}/events/export?festivalId=${encodeURIComponent(festivalId)}`,
+
+  // Liput
+  getTickets: (eventId: string) => request<TicketMeta[]>(`/events/${eventId}/tickets`),
+  uploadTicket: (eventId: string, slot: 1 | 2, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return requestForm<TicketMeta>(`/events/${eventId}/tickets/${slot}`, formData);
+  },
+  deleteTicket: (eventId: string, slot: 1 | 2) =>
+    request<{ success: boolean }>(`/events/${eventId}/tickets/${slot}`, { method: 'DELETE' }),
+  ticketFileUrl: (eventId: string, slot: 1 | 2) => `${BASE_URL}/events/${eventId}/tickets/${slot}/file`,
 };
 
 export { getToken };
