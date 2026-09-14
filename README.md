@@ -52,6 +52,19 @@ festivaali,vuosi,tyyppi,pvm,nimi,linkki,paikka,sijainti,alku,loppu,kesto,huom,no
 - Puuttuvat festivaalit ja paikat luodaan automaattisesti nimen (+ vuoden) perusteella
 - Tuonti on additiivinen — ei korvaa olemassa olevaa dataa
 
+## Elokuvaliput
+
+Jokaiseen `elokuva`-tyyppiseen tapahtumaan voi liittää kaksi lippukuvaa (Lippu 1 / Lippu 2), muokkaus-
+ikkunan Liput-osiosta. Kuvat tallennetaan `event_tickets`-tauluun **Postgres bytea-sarakkeena**, ei
+levylle — Renderin paikallinen levy ei ole pysyvä (tyhjenee joka deployn/restartin yhteydessä) eikä
+UpCloudilla ole erillistä tiedostopalvelua. Palvelin käsittelee kuvat ennen tallennusta (`sharp`):
+EXIF-autorotate, koon pienennys (max 2000px leveys) ja pakkaus JPEG:ksi (q85). Sallitut syötetyypit:
+jpeg/png/webp (ei HEIC:iä).
+
+- Backend-reitit: `server/routes/ticketRoutes.js`, mountattu `/api/events/:eventId/tickets`
+- Taulukko- ja kalenterinäkymässä 🎟️-kuvake avaa liput suoraan ilman koko tapahtuman avaamista
+- Service worker cachettaa lippukuvat (`workbox` runtimeCaching, `vite.config.ts`) offline-käyttöä varten
+
 ## Deploy
 
 - Backend: Render, `render.yaml` määrittää palvelun `hiff-api`
