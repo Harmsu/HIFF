@@ -234,7 +234,6 @@ export function EventModal({ festivalId, theaters, editingEvent, onSave, onCreat
               <input
                 value={highlight}
                 onChange={(e) => setHighlight(e.target.value)}
-                placeholder="esim. Orion!!!"
                 className="w-full px-3 py-2 border border-amber-300 bg-amber-50 rounded-lg focus:ring-2 focus:ring-yellow-500"
               />
             </div>

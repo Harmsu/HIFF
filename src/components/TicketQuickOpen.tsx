@@ -77,7 +77,11 @@ export function TicketQuickOpen({ eventId, tickets, className }: TicketQuickOpen
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); handleClose(); }}
-              className="fixed top-4 right-4 w-10 h-10 rounded-full bg-white/90 text-black text-xl leading-none"
+              className="fixed w-10 h-10 rounded-full bg-white/90 text-black text-xl leading-none"
+              style={{
+                top: 'calc(env(safe-area-inset-top, 0px) + 1rem)',
+                right: 'calc(env(safe-area-inset-right, 0px) + 1rem)',
+              }}
             >
               ✕
             </button>
